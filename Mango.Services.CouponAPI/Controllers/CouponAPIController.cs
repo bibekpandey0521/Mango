@@ -27,7 +27,8 @@ namespace Mango.Services.CouponAPI.Controllers
             try
             {
                 IEnumerable<Coupon> objList = _db.Coupons.ToList();
-                _response.Result = objList;
+                //_response.Result = objList;
+                _response.Result = _mapper.Map<IEnumerable<CouponDto>>(objList);
             }
             catch(Exception ex)
             {
@@ -51,7 +52,7 @@ namespace Mango.Services.CouponAPI.Controllers
                     MinAmount = obj.MinAmount
                 };
                 _response.Result = couponDto;
-               
+                
             }
             catch (Exception ex)
             {
