@@ -1,5 +1,7 @@
 <Solution>
-  <Folder Name="/Frontend/" />
+  <Folder Name="/Frontend/">
+    <Project Path="Mango.Web/Mango.Web.csproj" Id="783f4324-a426-45d1-ae2c-b94c889a927b" />
+  </Folder>
   <Folder Name="/Gateway/" />
   <Folder Name="/Integration/" />
   <Folder Name="/Services/">
