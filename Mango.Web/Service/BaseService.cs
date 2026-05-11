@@ -25,12 +25,20 @@ namespace Mango.Web.Service
                 HttpClient client = _httpClientFactory.CreateClient("MangoAPI");
 
                 HttpRequestMessage message = new();
-                message.Headers.Add("Accept", "appliction/json");
+
+                message.Headers.Add("Accept", "application/json");
+
+                message.RequestUri = new Uri(requestDto.Url);
 
                 if (requestDto.Data != null)
                 {
-                    message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
+                    message.Content = new StringContent(
+                        JsonConvert.SerializeObject(requestDto.Data),
+                        Encoding.UTF8,
+                        "application/json");
                 }
+
+               
                 HttpResponseMessage? apiResponse = null;
 
                 switch (requestDto.ApiType)
