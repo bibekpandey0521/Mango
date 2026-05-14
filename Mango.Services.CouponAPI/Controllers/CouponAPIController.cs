@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mango.Services.CouponAPI.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+    [Route("api/coupon")]
     [ApiController]
     public class CouponAPIController : ControllerBase
     {
@@ -128,6 +129,7 @@ namespace Mango.Services.CouponAPI.Controllers
             {
                 //Coupon obj = _db.Coupons.FirstOrDefault(u=>u.CouponId == id)!;
                 Coupon obj = _db.Coupons.First(u=>u.CouponId == id)!;
+                _db.Coupons.Remove(obj);
                 _db.SaveChanges();
             }
             catch(Exception ex)
