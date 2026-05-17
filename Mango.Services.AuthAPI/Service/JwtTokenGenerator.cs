@@ -25,8 +25,10 @@ namespace Mango.Services.AuthAPI.Service
             {
                 new Claim(JwtRegisteredClaimNames.Email,applicationUser.Email),
                 new Claim(JwtRegisteredClaimNames.Sub,applicationUser.Id),
-                new Claim(JwtRegisteredClaimNames.Name,applicationUser.UserName)
+                new Claim(JwtRegisteredClaimNames.Name,applicationUser.UserName),
+                
             };
+            claimList.AddRange(roles.Select(role => new Claim(ClaimTypes.Role,role)));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Audience = _jwtOptions.Audience,
