@@ -37,12 +37,42 @@ namespace Mango.Web.Service
                 }
                 message.RequestUri = new Uri(requestDto.Url);
 
-                if (requestDto.Data != null)
+                if (requestDto.ContentType == ContentType.MultipartFormData)
                 {
-                    message.Content = new StringContent(
-                        JsonConvert.SerializeObject(requestDto.Data),
-                        Encoding.UTF8,
-                        "application/json");
+                    var content = new MultipartFormDataContent();
+
+                    foreach (var prop in requestDto.Data.GetType().GetProperties())
+                    {
+                        var value = prop.GetValue(requestDto.Data);
+
+                        if (value == null) continue;
+
+                        // Handle file
+                        if (value is IFormFile file)
+                        {
+                            content.Add(
+                                new StreamContent(file.OpenReadStream()),
+                                prop.Name,
+                                file.FileName
+                            );
+                        }
+                        else
+                        {
+                            // Handle normal properties
+                            content.Add(new StringContent(value.ToString()), prop.Name);
+                        }
+                    }
+
+                    message.Content = content;
+                }
+                else
+                {
+                    if (requestDto.Data != null)
+                    {
+                        message.Content = new StringContent(
+                            JsonConvert.SerializeObject(requestDto.Data),
+                            Encoding.UTF8, "application/json");
+                    }
                 }
 
                
@@ -74,6 +104,16 @@ namespace Mango.Web.Service
                         return new() { IsSuccess = false, Message = "Unauthorized" };
                     case HttpStatusCode.InternalServerError:
                         return new() { IsSuccess = false, Message = "Internal Server Error" };
+                    case HttpStatusCode.BadRequest:
+
+                        var badRequestContent = await apiResponse.Content.ReadAsStringAsync();
+
+                        return new ResponseDto
+                        {
+                            IsSuccess = false,
+                            Message = badRequestContent
+                        };
+
                     default:
                         var apiContent = await apiResponse.Content.ReadAsStringAsync();
                         var apiResponseDto = JsonConvert.DeserializeObject<ResponseDto>(apiContent);
